@@ -10,5 +10,6 @@ set(SOURCE_FILES main.cpp)
 
 add_executable(onetracer_tests ${SOURCE_FILES})
 target_link_libraries(onetracer_tests gtest)
-install(TARGETS onetracer_tests DESTINATION bin)
 
+
+install(TARGETS onetracer_tests DESTINATION bin)
