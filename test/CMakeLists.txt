@@ -9,7 +9,7 @@ include_directories(lib/googletest/)
 set(SOURCE_FILES main.cpp src/ray_test.cpp)
 
 add_executable(onetracer_tests ${SOURCE_FILES})
-target_link_libraries(onetracer_tests components gtest)
+target_link_libraries(onetracer_tests components gtest gmock)
 
 
 install(TARGETS onetracer_tests DESTINATION bin)

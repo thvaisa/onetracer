@@ -1,63 +1,93 @@
-//
-// Created by Konstantin Gredeskoul on 5/16/17.
-//
 #include <ray.hpp>
+#include <project.hpp>
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
+#include <limits>
 
-using namespace std;
 
+using ::testing::_;
+using ::testing::ElementsAre;
+using ::testing::Gt;
+using ::testing::ExitedWithCode;
 
-#define VI vector<long long>
+const c_float X[3] = {1.0, 2.0, 3.0};
+const c_float N[3] = {4.0,5.0,6.0};
+const c_float step_size = 10.0;
+const material_indx mat_indx = 11;
+const RAYSTATUS ray_status = RAYSTATUS::DEAD;
+const face_identifier face_id = 12;
+Ray* _ray;
+c_float inf = std::numeric_limits<c_float>::infinity();
+c_float nan0 = std::numeric_limits<c_float>::quiet_NaN();
 
-class DividerTest : public ::testing::Test {
+class RayTest : public ::testing::Test{
+    protected:
+  
+    virtual void SetUp() {
+        _ray = new Ray(X,N,step_size,mat_indx,ray_status,face_id);
+    };
 
-protected:
-  VI numerators   = {5, 9, 17, 933345453464353416L};
-  VI denominators = {2, 3, 19, 978737423423423499L};
-  VI divisions    = {2, 3, 0, 0};
-  VI remainders   = {1, 0, 17, 933345453464353416};
+    virtual void TearDown() {
+        delete _ray;
+        _ray = nullptr;
+    };
 
-  virtual void SetUp() {
-  };
+    void verify(Ray* ray, bool check_X = true, bool check_N = true){
+      EXPECT_EQ(step_size, ray->step_size());
+      EXPECT_EQ(mat_indx, ray->mat_indx());
+      EXPECT_EQ(ray_status, ray->ray_status());
+      EXPECT_EQ(face_id, ray->face_id());
 
-  virtual void TearDown() {
-  };
-
-  virtual void verify(int index) {
-    //Fraction       f        = Fraction{numerators.at(index), denominators.at(index)};
-    //DivisionResult expected = DivisionResult{divisions.at(index), remainders.at(index)};
-   //// DivisionResult result   = Division(f).divide();
-    //EXPECT_EQ(result.division, expected.division);
-    //EXPECT_EQ(result.remainder, expected.remainder);
-  }
+      if(check_X) ASSERT_THAT(std::vector<c_float>(ray->X(), ray->X()+3), testing::ElementsAreArray(X,3));
+      if(check_N) ASSERT_THAT(std::vector<c_float>(ray->N(), ray->N()+3), testing::ElementsAreArray(N,3));
+    }
 };
 
-TEST_F(DividerTest, 5_DivideBy_2) {
-  verify(0);
+
+
+TEST_F(RayTest, Test_Constructor) {
+    verify(_ray);
+    delete _ray;
+    _ray = new Ray();
+    EXPECT_EQ(RAYSTATUS::RAW, _ray->ray_status());
 }
 
-TEST_F(DividerTest, 9_DivideBy_3) {
-  verify(1);
+
+TEST_F(RayTest, Test_Setters) {
+    delete _ray;
+    _ray = new Ray();
+
+    _ray->set_X(X);
+    _ray->set_N(N);
+    _ray->set_face_identifier(face_id);
+    _ray->set_ray_status(ray_status);
+    _ray->set_step_size(step_size);
+    _ray->set_material_indx(mat_indx);
+    verify(_ray);  
 }
 
-TEST_F(DividerTest, 17_DivideBy_19) {
-  verify(2);
+
+TEST_F(RayTest, Test_steps) {
+    c_float vec0[3];
+    c_float vec1[3] = {X[0]+N[0]*step_size,X[1]+N[1]*step_size,X[2]+N[2]*step_size};
+    _ray->get_next_step(vec0);
+    ASSERT_THAT(std::vector<c_float>(vec0, vec0+3), testing::ElementsAreArray(vec1,3));
+    verify(_ray);
+    _ray->take_step();
+    ASSERT_THAT(std::vector<c_float>(_ray->X(), _ray->X()+3), testing::ElementsAreArray(vec1,3));
+    verify(_ray,false,true);
 }
 
-TEST_F(DividerTest, Long_DivideBy_Long) {
-  verify(3);
-}
 
-TEST_F(DividerTest, DivisionByZero) {
-  //Division d = Division(Fraction{1, 0});
-  //try {
-  //  d.divide();
-  //  FAIL() << "Expected divide() method to throw DivisionByZeroException";
- // } catch (DivisionByZero const &err) {
-  //  EXPECT_EQ(err.what(), DIVISION_BY_ZERO_MESSAGE);
-  //}
-  //catch (...) {
-  //  FAIL() << "Expected DivisionByZeroException!";
-  //}
-}
 
+TEST_F(RayTest, Test_problems) {
+    EXPECT_DEBUG_DEATH(_ray->set_step_size(-1.0),"c");
+    EXPECT_DEBUG_DEATH(_ray->set_step_size(inf),"c");
+    c_float vec0[3] = {0,inf,inf};
+    c_float vec1[3] = {0,0,nan0};
+    EXPECT_DEBUG_DEATH(_ray->set_X(vec0),"c");
+    EXPECT_DEBUG_DEATH(_ray->set_X(vec1),"c");
+    EXPECT_DEBUG_DEATH(_ray->set_N(vec0),"c");
+    EXPECT_DEBUG_DEATH(_ray->set_N(vec1),"c");
+
+}
