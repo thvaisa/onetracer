@@ -22,12 +22,14 @@ class Ray{
         ~Ray(){};
 
         Ray(const Ray& other) // copy constructor
-        : Ray(other.X(), other.N(), other.step_size(), other.mat_indx(), other.ray_status(), other.face_id())
+            : Ray(other._X, other._N, other._step_size, other._mat_indx, 
+                    other._ray_status, other._face_id)
         {}
 
         Ray(Ray&& other) noexcept // move constructor
         {
-            Ray(other.X(), other.N(), other.step_size(), other.mat_indx(), other.ray_status(), other.face_id());
+            copy_values(other._X, other._N, other._step_size, 
+                        other._mat_indx, other._ray_status, other._face_id);
         }
  
         Ray& operator=(const Ray& other) // copy assignment
@@ -38,8 +40,8 @@ class Ray{
         //stupid but later more stuff when PhysicsRay will be included
         Ray& operator=(Ray&& other) noexcept // move assignment
         {
-            copy_values(other.X(), other.N(), other.step_size(), 
-                        other.mat_indx(), other.ray_status(), other.face_id());
+            copy_values(other._X, other._N, other._step_size, 
+                        other._mat_indx, other._ray_status, other._face_id);
             return *this;
         }
 
@@ -82,12 +84,12 @@ class Ray{
         }
 
         void set_X(const c_float * const X){
-            copy_arr(this->_X, X, 3);
+            copy_arr<c_float>(this->_X, X, 3);
         }
 
         void set_N(const c_float * const N){
 
-            copy_arr(this->_N, N, 3);
+            copy_arr<c_float>(this->_N, N, 3);
         }
 
         void set_face_identifier(const c_float& face_id){

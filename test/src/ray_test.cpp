@@ -16,31 +16,32 @@ const c_float step_size = 10.0;
 const material_indx mat_indx = 11;
 const RAYSTATUS ray_status = RAYSTATUS::DEAD;
 const face_identifier face_id = 12;
-Ray* _ray;
-c_float inf = std::numeric_limits<c_float>::infinity();
-c_float nan0 = std::numeric_limits<c_float>::quiet_NaN();
+
+const c_float inf = std::numeric_limits<c_float>::infinity();
+const c_float nan0 = std::numeric_limits<c_float>::quiet_NaN();
 
 class RayTest : public ::testing::Test{
     protected:
-  
-    virtual void SetUp() {
-        _ray = new Ray(X,N,step_size,mat_indx,ray_status,face_id);
-    };
+      Ray* _ray;
+      
+      virtual void SetUp() {
+          _ray = new Ray(X,N,step_size,mat_indx,ray_status,face_id);
+      };
 
-    virtual void TearDown() {
-        delete _ray;
-        _ray = nullptr;
-    };
+      virtual void TearDown() {
+          delete _ray;
+          _ray = nullptr;
+      };
 
-    void verify(Ray* ray, bool check_X = true, bool check_N = true){
-      EXPECT_EQ(step_size, ray->step_size());
-      EXPECT_EQ(mat_indx, ray->mat_indx());
-      EXPECT_EQ(ray_status, ray->ray_status());
-      EXPECT_EQ(face_id, ray->face_id());
+      void verify(Ray* ray, bool check_X = true, bool check_N = true){
+        EXPECT_EQ(step_size, ray->step_size());
+        EXPECT_EQ(mat_indx, ray->mat_indx());
+        EXPECT_EQ(ray_status, ray->ray_status());
+        EXPECT_EQ(face_id, ray->face_id());
 
-      if(check_X) ASSERT_THAT(std::vector<c_float>(ray->X(), ray->X()+3), testing::ElementsAreArray(X,3));
-      if(check_N) ASSERT_THAT(std::vector<c_float>(ray->N(), ray->N()+3), testing::ElementsAreArray(N,3));
-    }
+        if(check_X) ASSERT_THAT(std::vector<c_float>(ray->X(), ray->X()+3), testing::ElementsAreArray(X,3));
+        if(check_N) ASSERT_THAT(std::vector<c_float>(ray->N(), ray->N()+3), testing::ElementsAreArray(N,3));
+      }
 };
 
 
