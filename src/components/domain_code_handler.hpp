@@ -26,8 +26,8 @@ class DomainCodeHandler{
         void operator=(DomainCodeHandler const&)  = delete;
 
 
-        bool register_domain(std::string name);
-        bool registered(std::string name);
+        bool register_domain(const std::string& name);
+        bool registered(const std::string& name);
         bool valid_code(domain_code code);
         std::string get_domain_name(domain_code code);
 

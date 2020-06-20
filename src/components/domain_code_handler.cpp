@@ -2,7 +2,7 @@
 
 const std::string DomainCodeHandler::NULLCODE = "NULLCODE";
 
-bool DomainCodeHandler::register_domain(std::string name){
+bool DomainCodeHandler::register_domain(const std::string& name){
     if(registered(name)){
         BOOST_LOG_TRIVIAL(warning) << 
             "Trying to register multiple domains with name: "
@@ -13,7 +13,7 @@ bool DomainCodeHandler::register_domain(std::string name){
     return true;
 }
 
-bool DomainCodeHandler::registered(std::string name){
+bool DomainCodeHandler::registered(const std::string& name){
     for(auto iter = domain_codes.begin(); iter != domain_codes.end(); ++iter){
         if(iter->second == name){
             return true;

@@ -6,10 +6,11 @@ void OutputList::append_info(const std::string& info){
 }
 
 //Appends input list with single row
+//TODO: CHANGE Formatting
 void OutputList::append_input(const std::string& name, 
                     const std::string& type, 
-                    const std::string& radius,
+                    const std::string& value,
                     const std::string& description){
     std::string space = std::string(" ");
-    this->input.push_back(name+space+type+space+radius+space+description);
+    this->input.push_back(name+space+type+space+value+space+description);
 }
