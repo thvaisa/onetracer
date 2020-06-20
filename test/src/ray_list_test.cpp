@@ -11,16 +11,6 @@ using ::testing::ElementsAre;
 using ::testing::Gt;
 using ::testing::ExitedWithCode;
 
-const c_float X[3] = {1.0, 2.0, 3.0};
-const c_float N[3] = {4.0,5.0,6.0};
-const c_float step_size = 10.0;
-const material_indx mat_indx = 11;
-const RAYSTATUS ray_status = RAYSTATUS::DEAD;
-const face_identifier face_id = 12;
-
-const c_float inf = std::numeric_limits<c_float>::infinity();
-const c_float nan0 = std::numeric_limits<c_float>::quiet_NaN();
-
 class RayListTest : public ::testing::Test{
     protected:
         RayList* _ray_list;
@@ -33,8 +23,6 @@ class RayListTest : public ::testing::Test{
             delete _ray_list;
             _ray_list = nullptr;
         };
-
-
 };
 
 
