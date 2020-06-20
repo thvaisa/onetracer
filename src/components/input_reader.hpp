@@ -29,17 +29,15 @@ class InputReader{
 
         bool read_arg_file(const std::string& fname);
 
-
+        //TODO: more checks on input
         template<typename T, typename ... Args>
         T get_value(T default_value, Args ...args){
-            std::cout << data["test"]["ImInteger"] << " " 
-               << data["test","ImInteger"] << std::endl;
             std::stringstream path;
             path << '/';
             ((path << args << '/'), ...);
             std::string str = path.str();
-            str.pop_back();
             try{
+                str.pop_back();
                 return data[nlohmann::json::json_pointer(str)];
             }catch (std::exception& e){
                 BOOST_LOG_TRIVIAL(warning) << "Could not read path";
@@ -49,12 +47,8 @@ class InputReader{
             }
         }
 
-
-
     private:
-        InputReader() {
-            data = nlohmann::json();
-        }   
+        InputReader() : data(nlohmann::json()){}   
         nlohmann::json data;
 
 

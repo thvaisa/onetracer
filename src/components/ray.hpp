@@ -11,24 +11,25 @@ class Ray{
     public:
         Ray(){}
         Ray(const c_float* X,
+                const c_float* K,
                 const c_float* N,
                 const c_float step_size,
                 const material_indx mat_indx,
                 const RAYSTATUS ray_status,
                 const face_identifier face_id){
-            copy_values(X,N,step_size,mat_indx,ray_status, face_id);
+            copy_values(X,K,N,step_size,mat_indx,ray_status, face_id);
         }
 
         ~Ray(){};
 
         Ray(const Ray& other) // copy constructor
-            : Ray(other._X, other._N, other._step_size, other._mat_indx, 
+            : Ray(other._X, other._K, other._N, other._step_size, other._mat_indx, 
                     other._ray_status, other._face_id)
         {}
 
         Ray(Ray&& other) noexcept // move constructor
         {
-            copy_values(other._X, other._N, other._step_size, 
+            copy_values(other._X, other._K, other._N, other._step_size, 
                         other._mat_indx, other._ray_status, other._face_id);
         }
  
@@ -40,13 +41,17 @@ class Ray{
         //stupid but later more stuff when PhysicsRay will be included
         Ray& operator=(Ray&& other) noexcept // move assignment
         {
-            copy_values(other._X, other._N, other._step_size, 
+            copy_values(other._X, other._K, other._N, other._step_size, 
                         other._mat_indx, other._ray_status, other._face_id);
             return *this;
         }
 
         const c_float* const X() const{
             return _X;
+        }
+
+        const c_float* const K() const{
+            return _K;
         }
 
         const c_float* const N() const{
@@ -71,14 +76,14 @@ class Ray{
 
         inline void take_step(){
             for(std::size_t i=0; i<3; i++){
-                _X[i] = _X[i]+_N[i]*_step_size;
+                _X[i] = _X[i]+_K[i]*_step_size;
                 assertm(!std::isnan(_X[i]), "for some reason take_step got nan");
             }
         }
 
         inline void get_next_step(c_float * const X_next) const{
             for(std::size_t i=0; i<3; i++){
-                X_next[i] = _X[i]+_N[i]*_step_size;
+                X_next[i] = _X[i]+_K[i]*_step_size;
                 assertm(!std::isnan(X_next[i]), "for some reason get_next_step got nan");
             }
         }
@@ -87,8 +92,13 @@ class Ray{
             copy_arr<c_float>(this->_X, X, 3);
         }
 
-        void set_N(const c_float * const N){
+        void set_K(const c_float * const K){
+            assertm(normalized(K), "K must be normalized");
+            copy_arr<c_float>(this->_K, K, 3);
+        }
 
+        void set_N(const c_float * const N){
+            assertm(normalized(N), "N must be normalized");
             copy_arr<c_float>(this->_N, N, 3);
         }
 
@@ -101,7 +111,7 @@ class Ray{
         } 
 
         void set_step_size(const c_float& step_size){
-            assertm(step_size >= 0, "Step size must be positive");
+            assertm(step_size >= 0, "Step size must be non-negative");
             assertm(!std::isnan(step_size), "nan was passed");
             assertm(!std::isinf(step_size), "inf was passed");
             this->_step_size = step_size;
@@ -117,7 +127,8 @@ class Ray{
 
         //TODO: Change later to place where tracer can access easier
         c_float _X[3];                  //position
-        c_float _N[3];                  //direction
+        c_float _K[3];                  //ray direction
+        c_float _N[3];                  //surface normal
 
         c_float _step_size;             //step size
         material_indx _mat_indx;         //material index
@@ -125,12 +136,14 @@ class Ray{
         face_identifier _face_id; 
 
         void copy_values(const c_float* X,
+                const c_float* K,
                 const c_float* N,
                 const c_float step_size,
                 const c_int mat_indx,
                 const RAYSTATUS ray_status,
                 const face_identifier face_id){
             copy_arr <c_float> (this->_X, X, 3);
+            copy_arr <c_float> (this->_K, K, 3);
             copy_arr <c_float> (this->_N, N, 3);
             this->_step_size = step_size;
             this->_mat_indx = mat_indx;

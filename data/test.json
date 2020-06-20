@@ -2,6 +2,15 @@
     "test": {
         "title": "example glossary",
         "ImInteger": 1,
-        "ImFloat":1.0
+        "ImFloat": 5.1
+        },
+    
+    "domains":{
+        "testDomain":{
+            "SphereTracer":{
+                "radius" : 1.5
+            }
         }
+    }
+
 }

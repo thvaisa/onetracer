@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.2)
 project(components C CXX)
 
 
-set(HEADERS ray.hpp ray_list.hpp project.hpp input_reader.hpp sphere_tracer.hpp output_writer.hpp)
+set(HEADERS ray.hpp ray_list.hpp project.hpp input_reader.hpp 
+            sphere_tracer.hpp output_writer.hpp
+            domain_code_handler.hpp)
 
 set(SOURCE_FILES
     ray.cpp
@@ -10,6 +12,7 @@ set(SOURCE_FILES
     sphere_tracer.cpp
     output_writer.cpp
     input_reader.cpp
+    domain_code_handler.cpp
     ${HEADERS}
 )
 

@@ -49,8 +49,12 @@ TEST_F(RayListTest, Test_iterator_change_read) {
         EXPECT_EQ(ray.ray_status(), RAYSTATUS::RAW);
         ray.set_ray_status(RAYSTATUS::ESCAPE);
         double X[3] = {test+1.0,test+2.0,test+3.0};
+        double K[3] = {test*100.0+1.0,test*100.0+2.0,test*100.0+3.0};
         double N[3] = {test*10.0+1.0,test*10.0+2.0,test*10.0+3.0};
+        normalize(K,3);
+        normalize(N,3);
         ray.set_X(X);
+        ray.set_K(K);
         ray.set_N(N);
         test++;
     }
@@ -60,8 +64,12 @@ TEST_F(RayListTest, Test_iterator_change_read) {
         Ray& ray = *it;
         EXPECT_EQ(ray.ray_status(), RAYSTATUS::ESCAPE);
         double X[3] = {test+1.0,test+2.0,test+3.0};
+        double K[3] = {test*100.0+1.0,test*100.0+2.0,test*100.0+3.0};
         double N[3] = {test*10.0+1.0,test*10.0+2.0,test*10.0+3.0};
+        normalize(N,3);
+        normalize(K,3);
         ASSERT_THAT(std::vector<c_float>(ray.X(), ray.X()+3), testing::ElementsAreArray(X,3));
+        ASSERT_THAT(std::vector<c_float>(ray.K(), ray.K()+3), testing::ElementsAreArray(K,3));
         ASSERT_THAT(std::vector<c_float>(ray.N(), ray.N()+3), testing::ElementsAreArray(N,3));
         test++;
     }

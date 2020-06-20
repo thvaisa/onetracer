@@ -7,9 +7,10 @@ add_definitions(-DBOOST_LOG_DYN_LINK)
 include_directories(${ONETRACER_HEADERS_DIR})
 include_directories(lib/googletest/)
 
-set(SOURCE_FILES main.cpp src/ray_test.cpp src/ray_list_test.cpp 
+set(SOURCE_FILES main.cpp src/project_test.cpp src/ray_test.cpp src/ray_list_test.cpp 
                 src/input_reader_test.cpp src/sphere_tracer_test.cpp
-                src/output_writer_test.cpp src/input_reader_test.cpp)
+                src/output_writer_test.cpp src/input_reader_test.cpp
+                src/domain_code_handler_test.cpp)
 
 add_executable(onetracer_tests ${SOURCE_FILES})
 
